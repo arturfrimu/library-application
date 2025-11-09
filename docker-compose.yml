@@ -1,0 +1,44 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: library-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-library}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - library-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-library} -h localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  library-application:
+    image: library-application:latest
+    container_name: library-application
+    ports:
+      - "8092:8092"
+    build:
+      context: .
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USERNAME: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - library-network
+
+volumes:
+  postgres_data:
+
+networks:
+  library-network:
+    driver: bridge

@@ -1,0 +1,139 @@
+openapi: 3.0.0
+info:
+  title: Borrows API
+  version: 1.0.0
+  description: API for managing book borrows and returns
+servers:
+  - url: http://localhost:8092
+
+paths:
+  /api/borrows:
+    post:
+      summary: "POST api/borrows"
+      operationId: "borrowBook"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BorrowBookRequest"
+        required: true
+      responses:
+        "201":
+          description: "Created"
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Not Found"
+        "409":
+          description: "Conflict"
+
+  /api/borrows/return:
+    post:
+      summary: "POST api/borrows/return"
+      operationId: "returnBook"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReturnBookRequest"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Not Found"
+        "409":
+          description: "Conflict"
+
+  /api/borrows/users/{userId}:
+    get:
+      summary: "GET api/borrows/users/{userId}"
+      operationId: "getBorrowedBooks"
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BorrowedBookResponse"
+        "404":
+          description: "Not Found"
+
+components:
+  schemas:
+    BorrowBookRequest:
+      type: object
+      required:
+        - userId
+        - bookId
+      properties:
+        userId:
+          type: string
+          format: uuid
+        bookId:
+          type: string
+          format: uuid
+
+    ReturnBookRequest:
+      type: object
+      required:
+        - borrowRecordId
+      properties:
+        borrowRecordId:
+          type: string
+          format: uuid
+
+    BorrowedBookResponse:
+      type: object
+      properties:
+        borrowRecordId:
+          type: string
+          format: uuid
+        borrowDate:
+          type: string
+          format: date-time
+        userId:
+          type: string
+          format: uuid
+        userEmail:
+          type: string
+        userFirstName:
+          type: string
+        userLastName:
+          type: string
+        bookId:
+          type: string
+          format: uuid
+        bookTitle:
+          type: string
+        bookIsbn:
+          type: string
+        bookPublishedYear:
+          type: integer
+        authorId:
+          type: string
+          format: uuid
+        authorName:
+          type: string
+

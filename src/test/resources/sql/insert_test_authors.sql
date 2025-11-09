@@ -1,0 +1,4 @@
+INSERT INTO library.authors (id, name)
+VALUES ('22222222-2222-2222-2222-222222222222', 'Test Author')
+ON CONFLICT (id) DO NOTHING;
+

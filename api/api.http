@@ -1,0 +1,42 @@
+@baseUrl = http://localhost:8092
+@userId = 24641ba6-35db-4c9d-98ac-aa16b99bfc36
+@bookId = 0fed647f-d04c-4b90-9570-ebef3cae9e66
+@borrowRecordId = d092b7af-e410-49d3-b014-1c4cf3878324
+@authorId = b6ab6842-a65b-446b-b303-aa7622673d0a
+
+### Get all users with pagination
+GET {{baseUrl}}/api/users?size=10&page=0&sort=email,asc
+
+### Get books with pagination
+GET {{baseUrl}}/api/books?size=50&page=0&sort=title,asc&sort=authorName,desc
+
+### Borrow a book for a user
+POST {{baseUrl}}/api/borrows
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "bookId": "{{bookId}}"
+}
+
+### Return a borrowed book
+POST {{baseUrl}}/api/borrows/return
+Content-Type: application/json
+
+{
+  "borrowRecordId": "{{borrowRecordId}}"
+}
+
+### Get all borrowed books for a specific user
+GET {{baseUrl}}/api/borrows/users/{{userId}}
+
+### Create a new book
+POST {{baseUrl}}/api/books
+Content-Type: application/json
+
+{
+  "title": "Clean code",
+  "authorId": "{{authorId}}",
+  "isbn": "12314124124",
+  "publishedYear": 2000
+}

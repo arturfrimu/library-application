@@ -1,0 +1,118 @@
+openapi: 3.0.0
+info:
+  title: Books API
+  version: 1.0.0
+  description: API for managing books in the library
+servers:
+  - url: http://localhost:8092
+
+paths:
+  /api/books:
+    get:
+      summary: "GET api/books"
+      operationId: "findBooks"
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: sort
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/BookResponse"
+                  totalElements:
+                    type: integer
+                  totalPages:
+                    type: integer
+                  number:
+                    type: integer
+                  size:
+                    type: integer
+
+    post:
+      summary: "POST api/books"
+      operationId: "createBook"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBookRequest"
+        required: true
+      responses:
+        "201":
+          description: "Created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookResponse"
+        "400":
+          description: "Bad Request"
+        "409":
+          description: "Conflict"
+
+components:
+  schemas:
+    BookResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        authorId:
+          type: string
+          format: uuid
+        authorName:
+          type: string
+        isbn:
+          type: string
+        publishedYear:
+          type: integer
+        active:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+        updated:
+          type: string
+          format: date-time
+
+    CreateBookRequest:
+      type: object
+      required:
+        - title
+        - authorId
+        - isbn
+        - publishedYear
+      properties:
+        title:
+          type: string
+          maxLength: 200
+        authorId:
+          type: string
+          format: uuid
+        isbn:
+          type: string
+          maxLength: 20
+        publishedYear:
+          type: integer
+

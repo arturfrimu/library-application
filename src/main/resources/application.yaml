@@ -1,0 +1,39 @@
+server:
+  port: 8092
+
+spring:
+  application:
+    name: Library
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/library
+    username: ${POSTGRES_USERNAME:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+    validate-on-migrate: true
+    baseline-on-migrate: true
+    baseline-version: 0
+    locations: classpath:db/migration
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      org.hibernate:
+        envers:
+          autoRegisterListeners: true
+          audit_table_suffix: _history
+          default_schema: library_history
+          store_data_at_delete: true
+          revision_field_name: revision
+          revision_type_field_name: revision_type
+          revision_sequence_name: library_history.revinfo_seq
+        hibernate:
+          default_schema: library
+          show_sql: ${SHOW_SQL:true}
+          format_sql: ${FORMAT_SQL:true}
+          highlight_sql: ${HIGHLIGHT_SQL:true}
+          session.events.log.LOG_QUERIES_SLOWER_THAN_MS: ${SLOW_SQL_QUERY_INDICATOR_MS:1500}
+          hbm2ddl:
+            auto: validate
